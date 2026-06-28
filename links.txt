@@ -1,0 +1,3 @@
+https://ui.shadcn.com/docs/forms/react-hook-form
+https://demoqa.com/automation-practice-form
+https://practice.expandtesting.com/register
