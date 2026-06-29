@@ -21,22 +21,24 @@ import { logger } from './tools/logger';
 // Disable tracing to avoid sending data to OpenAI's tracing service
 setTracingDisabled(true);
 
+const DEFAULT_TASK = `
+Please complete the following task:
+
+1. Open a browser
+2. Navigate to: https://example.com
+3. Observe the page structure using get_page_html.
+4. Interact with the page if there are interactive elements (e.g., draw on a canvas, play media, or fill a form).
+5. Take a screenshot to verify your actions.
+6. Report what you accomplished.
+
+Important: Do NOT assume what elements exist. Use get_page_html to discover the actual structure.
+`;
+
 /**
  * The task prompt sent to the agent.
  * This describes WHAT to do, not HOW — the agent decides the approach autonomously.
  */
-const TASK_PROMPT = `
-Please complete the following task:
-
-1. Open a browser
-2. Navigate to: https://ui.shadcn.com/docs/forms/react-hook-form
-3. Find the form on the page — it should have fields like "Username" or "Name" and possibly a "Description" or "Bio" field
-4. Fill in the form fields with appropriate sample data
-5. Take a screenshot showing the filled form
-6. Report what fields you found and what you filled in
-
-Important: Do NOT assume what fields exist. Use get_page_html to discover the actual form structure and field names. The page may have changed since this task was written, so adapt to whatever you find.
-`;
+const TASK_PROMPT = process.argv[2] || DEFAULT_TASK;
 
 /**
  * Main execution function.

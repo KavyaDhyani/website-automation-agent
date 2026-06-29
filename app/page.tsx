@@ -51,10 +51,8 @@ const LOG_ICONS: Record<string, string> = {
 export default function Home() {
   // State
   const [url, setUrl] = useState('https://ui.shadcn.com/docs/forms/react-hook-form');
-  const [formFields, setFormFields] = useState<FormField[]>([
-    { id: '1', key: 'username', value: 'TestUser123' },
-    { id: '2', key: 'bio', value: 'AI automation testing' },
-  ]);
+  const [instruction, setInstruction] = useState('');
+  const [formFields, setFormFields] = useState<FormField[]>([]);
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [screenshots, setScreenshots] = useState<Screenshot[]>([]);
   const [status, setStatus] = useState<AgentStatus>('idle');
@@ -115,7 +113,7 @@ export default function Home() {
       const response = await fetch('/api/agent/run', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url, formData }),
+        body: JSON.stringify({ url, formData, instruction }),
         signal: controller.signal,
       });
 
@@ -285,6 +283,21 @@ export default function Home() {
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               disabled={status === 'running'}
+            />
+          </div>
+
+          {/* Task Instruction */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <label style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              Task Instruction (Optional)
+            </label>
+            <textarea
+              className="glow-input"
+              placeholder="e.g. Draw a circle on the canvas, or play the first video..."
+              value={instruction}
+              onChange={(e) => setInstruction(e.target.value)}
+              disabled={status === 'running'}
+              style={{ minHeight: '80px', resize: 'vertical', fontSize: '13px', padding: '8px 10px' }}
             />
           </div>
 

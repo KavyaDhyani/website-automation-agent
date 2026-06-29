@@ -1,0 +1,1 @@
+pnpm run agent "Navigate to https://music.youtube.com and play a song"

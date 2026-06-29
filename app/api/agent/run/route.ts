@@ -28,7 +28,7 @@ setTracingDisabled(true);
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
-  let body: { url: string; formData: Record<string, string> };
+  let body: { url: string; formData: Record<string, string>; instruction?: string };
 
   try {
     body = await request.json();
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
     return Response.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
-  const { url, formData } = body;
+  const { url, formData, instruction } = body;
 
   if (!url || typeof url !== 'string') {
     return Response.json({ error: 'URL is required' }, { status: 400 });
@@ -57,15 +57,13 @@ Please complete the following task:
 
 1. Open a browser
 2. Navigate to: ${url}
-3. Find any form elements on the page
-4. Discover the actual form structure using get_page_html — do NOT assume what fields exist
-5. Fill in the form fields with the following data:
-${formFieldsDescription || '  - Use appropriate sample/test data for any fields you find'}
-6. Take a screenshot showing the filled form
-7. If there is a submit button, click it and take another screenshot
-8. Report what fields you found and what you filled in
+${instruction ? `3. Follow these instructions: ${instruction}` : `3. Explore and interact with the elements on the page as appropriate.`}
+${formFieldsDescription ? `4. Fill in the form fields with the following data:
+${formFieldsDescription}` : ''}
+5. Take a screenshot to verify your actions.
+6. Report what you accomplished.
 
-Important: Use get_page_html to discover the actual form structure. The page may have changed, so adapt to whatever you find. Match the provided data to the most appropriate form fields based on field names, labels, and placeholders.
+Important: Use get_page_html to discover the actual page structure. The page may have changed, so adapt to whatever you find. Match any provided data to the most appropriate elements based on names, labels, and placeholders.
 `;
 
   // Set up SSE stream

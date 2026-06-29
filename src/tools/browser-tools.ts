@@ -191,10 +191,10 @@ export const getPageHtmlTool = tool({
           }
         });
 
-        // Get all interactive elements
+        // Get all interactive and media elements
         document
           .querySelectorAll(
-            'input, textarea, select, button, [role="button"], [contenteditable="true"]'
+            'input, textarea, select, button, [role="button"], [contenteditable="true"], video, audio, canvas'
           )
           .forEach((el) => {
             // Skip hidden elements or those outside the viewport
@@ -303,6 +303,38 @@ export const clickOnScreenTool = tool({
       const message = err instanceof Error ? err.message : String(err);
       logger.error(`Failed to click at (${x}, ${y})`, message);
       return `Error clicking at (${x}, ${y}): ${message}`;
+    }
+  },
+});
+
+// ─── mouse_drag ──────────────────────────────────────────────────────────────
+
+export const mouseDragTool = tool({
+  name: 'mouse_drag',
+  description:
+    'Drag the mouse from one point to another on the screen. This is useful for drawing, swiping, or drag-and-drop actions.',
+  parameters: z.object({
+    startX: z.number().describe('Starting X coordinate in pixels'),
+    startY: z.number().describe('Starting Y coordinate in pixels'),
+    endX: z.number().describe('Ending X coordinate in pixels'),
+    endY: z.number().describe('Ending Y coordinate in pixels'),
+  }),
+  execute: async ({ startX, startY, endX, endY }) => {
+    logger.tool(`mouse_drag called from (${startX}, ${startY}) to (${endX}, ${endY})`);
+    try {
+      const page = getPage();
+      await page.mouse.move(startX, startY);
+      await page.mouse.down();
+      // Use steps to simulate a smooth drag
+      await page.mouse.move(endX, endY, { steps: 10 });
+      await page.mouse.up();
+      await page.waitForTimeout(500);
+      logger.success(`Dragged from (${startX}, ${startY}) to (${endX}, ${endY})`);
+      return `Successfully dragged mouse from (${startX}, ${startY}) to (${endX}, ${endY})`;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      logger.error(`Failed to drag mouse`, message);
+      return `Error dragging mouse: ${message}`;
     }
   },
 });
@@ -450,6 +482,7 @@ export const browserTools = [
   getPageHtmlTool,
   clickElementTool,
   clickOnScreenTool,
+  mouseDragTool,
   sendKeysTool,
   scrollTool,
   doubleClickTool,

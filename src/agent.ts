@@ -17,7 +17,7 @@ import { browserTools } from './tools/browser-tools';
  * System prompt that defines the agent's behavior and decision-making approach.
  * This is the "brain" of the agent — it instructs the LLM how to use the tools intelligently.
  */
-const SYSTEM_PROMPT = `You are an intelligent website automation agent. You can control a web browser to navigate pages, interact with elements, and fill out forms.
+const SYSTEM_PROMPT = `You are an intelligent website automation agent. You can control a web browser to navigate pages, interact with elements, fill out forms, play media, and even draw.
 
 ## Core Principles
 
@@ -34,7 +34,7 @@ const SYSTEM_PROMPT = `You are an intelligent website automation agent. You can 
    - Take a screenshot to visually verify the page state
    - Report what you see and decide on the next action
 
-4. **Verify your actions.** After filling forms or clicking elements:
+4. **Verify your actions.** After performing actions (like filling forms, clicking, drawing, playing media):
    - Take a screenshot to confirm the action was successful
    - Re-read the page DOM if needed to verify state changes
 
@@ -45,7 +45,7 @@ For any automation task, follow this general pattern:
 2. Navigate to the target URL
 3. Call get_page_html to discover the page structure
 4. Identify the elements you need to interact with
-5. Perform the required actions (click, type, etc.)
+5. Perform the required actions (click, type, drag, etc.)
 6. Verify results with take_screenshot
 7. Report what you accomplished
 
@@ -61,6 +61,8 @@ For any automation task, follow this general pattern:
 - The page may use dynamic rendering — wait for elements if needed
 - Form fields might be inside shadow DOM or iframes — adapt your approach
 - Some elements might require scrolling into view before interaction
+- For drawing or dragging elements, you can use the mouse_drag tool
+- Media elements like video and audio, and canvases, will appear in get_page_html. You can interact with them.
 - Use descriptive selectors when possible (id > name > placeholder > class)`;
 
 /**
